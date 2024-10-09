@@ -9,12 +9,26 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser'); // Added for user tracking
 const { v4: uuidv4 } = require('uuid'); // Added for generating unique user IDs
 
+// Create an Express app
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Handle all routes by sending the index.html file
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+
+
 // Replace with your Spotify app credentials
 const client_id = '8e023a72267c4f74b9de04ccede8f811'; // Replace with your Spotify Client ID
 const client_secret = '67f48b407fd546d4aad1faa05314e055'; // Replace with your Spotify Client Secret
 const redirect_uri = 'http://localhost:8888';
 
-const app = express();
+
 const server = http.createServer(app);
 const io = socketIo(server);
 
@@ -368,9 +382,6 @@ function getAvailableDevices(callback) {
 }
 
 // Start the server
-const PORT = 8888;
-const HOST = '0.0.0.0'; // Listen on all network interfaces
-
-server.listen(PORT, HOST, () => {
-  console.log(`Server running on http://${HOST}:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
