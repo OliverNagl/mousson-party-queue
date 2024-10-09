@@ -1,93 +1,69 @@
-/* style.css */
-
-body {
-  font-family: Arial, sans-serif;
+/* General Reset */
+* {
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
+  box-sizing: border-box;
 }
 
+/* Body styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f4f8; /* Light background */
+  color: #333; /* Dark text color */
+}
+
+/* Header styles */
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  background-color: #333;
-  color: white;
+  background-color: #007bff; /* Blue header */
+  color: #fff; /* White text */
+  padding: 15px;
+  text-align: center;
 }
 
-header h1 {
-  margin: 0;
-}
-
-header .fa-bars {
-  font-size: 24px;
-}
-
+/* Search section styles */
 #search-section {
   padding: 20px;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin: 10px;
-  border-radius: 8px;
+  text-align: center;
 }
 
 #search-input {
-  width: calc(100% - 100px);
+  width: calc(100% - 90px); /* Full width minus button width */
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 2px solid #007bff; /* Blue border */
+  border-radius: 5px; /* Rounded corners */
   margin-right: 10px;
 }
 
 #search-btn {
   padding: 10px 20px;
+  background-color: #007bff; /* Blue button */
+  color: white; /* White text */
   border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 4px;
+  border-radius: 5px; /* Rounded corners */
   cursor: pointer;
 }
 
-#search-results .song-item, #queue .song-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+#search-btn:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Song Queue styles */
+h2 {
+  margin: 20px 0;
+  text-align: center;
+}
+
+#queue {
   padding: 10px;
-  background-color: white;
-  margin: 10px 0;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff; /* White background for queue */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow */
+  margin: 0 15px; /* Margin for spacing */
 }
 
-.song-info {
-  flex-grow: 1;
-}
-
-.vote-buttons button {
-  padding: 5px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-left: 5px;
-}
-
-.vote-buttons .upvote {
-  background-color: #28a745;
-  color: white;
-}
-
-.vote-buttons .downvote {
-  background-color: #dc3545;
-  color: white;
-}
-
+/* Responsive design */
 @media (max-width: 600px) {
   #search-input {
-    width: calc(100% - 80px);
-  }
-
-  #search-btn {
-    padding: 10px;
+    width: calc(100% - 70px); /* Adjust width for smaller screens */
   }
 }
