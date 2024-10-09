@@ -46,13 +46,15 @@ let playlistId = "051HRJaonkYB1gAIhn3GUJ"; // Store the playlist ID for reuse
 
 
 
-// Scopes required
 const scopes = [
   'user-read-playback-state',
   'user-modify-playback-state',
   'user-read-currently-playing',
   'streaming',
+  'playlist-modify-public',   // Add this for public playlists
+  'playlist-modify-private',  // Add this for private playlists
 ];
+
 
 // Generate random string for state
 function generateRandomString(length) {
@@ -217,28 +219,6 @@ app.post('/api/vote', (req, res) => {
   res.sendStatus(200);
 });
 
-// Create a playlist in a specific Spotify account (e.g., your app's account)
-function createPlaylist() {
-  const options = {
-    url: `https://api.spotify.com/v1/me/playlists`,
-    headers: { Authorization: 'Bearer ' + access_token },
-    json: {
-      name: "MoussonPartyPlaylist",
-      description: "Songs queued during the session",
-      public: True, // You can set it to true if you want the playlist public
-    },
-  };
-
-  request.post(options, (error, response, body) => {
-    if (!error && response.statusCode === 201) {
-      console.log("Playlist created successfully:", body);
-      playlistId = body.id; // Save the playlist ID
-    } else {
-      console.error("Error creating playlist:", error || body);
-    }
-  });
-}
-
 // Socket.io for real-time updates
 io.on('connection', (socket) => {
   console.log('A user connected');
@@ -272,9 +252,8 @@ function playNextTrack() {
     playTrack(currentTrack.uri);
 
     // Add the played track to the playlist
-    if (playlistId) {
-      addToPlaylist(currentTrack.uri);
-    }
+    addToPlaylist(currentTrack.uri);
+    
 
   } else {
     currentTrack = null;
