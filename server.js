@@ -22,7 +22,7 @@ app.get('*', (req, res) => {
 // Replace with your Spotify app credentials
 const client_id = process.env.SPOTIFY_CLIENT_ID; // Use environment variable
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Use environment variable
-const redirect_uri = process.env.REDIRECT_URI || 'http://localhost:8888';
+const redirect_uri = process.env.REDIRECT_URI || 'https://party-queue.herokuapp.com/callback';
 
 const server = http.createServer(app);
 const io = socketIo(server);
