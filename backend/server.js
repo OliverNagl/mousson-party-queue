@@ -12,7 +12,7 @@ const { v4: uuidv4 } = require('uuid'); // Added for generating unique user IDs
 // Replace with your Spotify app credentials
 const client_id = '8e023a72267c4f74b9de04ccede8f811'; // Replace with your Spotify Client ID
 const client_secret = '67f48b407fd546d4aad1faa05314e055'; // Replace with your Spotify Client Secret
-const redirect_uri = 'https://olivernagl.github.io/mousson-party-queue/';
+const redirect_uri = 'http://localhost:8888';
 
 const app = express();
 const server = http.createServer(app);
