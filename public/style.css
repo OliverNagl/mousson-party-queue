@@ -1,69 +1,144 @@
-/* General Reset */
-* {
+/* Global Styles */
+body {
+  font-family: 'Roboto', sans-serif;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  background-color: #f9f9f9;
+  color: #333;
 }
 
-/* Body styles */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f4f8; /* Light background */
-  color: #333; /* Dark text color */
-}
-
-/* Header styles */
+/* Header Styling */
 header {
-  background-color: #007bff; /* Blue header */
-  color: #fff; /* White text */
-  padding: 15px;
-  text-align: center;
+  background-color: #0d6efd;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
 }
 
-/* Search section styles */
+header h1 {
+  margin: 0;
+  font-size: 1.8em;
+}
+
+header i {
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+/* Search Section */
 #search-section {
   padding: 20px;
   text-align: center;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  max-width: 600px;
+  margin: 20px auto;
 }
 
 #search-input {
-  width: calc(100% - 90px); /* Full width minus button width */
   padding: 10px;
-  border: 2px solid #007bff; /* Blue border */
-  border-radius: 5px; /* Rounded corners */
-  margin-right: 10px;
+  width: 70%;
+  max-width: 400px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 1em;
 }
 
 #search-btn {
   padding: 10px 20px;
-  background-color: #007bff; /* Blue button */
-  color: white; /* White text */
+  margin-left: 10px;
+  background-color: #0d6efd;
+  color: white;
   border: none;
-  border-radius: 5px; /* Rounded corners */
+  border-radius: 20px;
   cursor: pointer;
+  font-size: 1em;
 }
 
 #search-btn:hover {
-  background-color: #0056b3; /* Darker blue on hover */
+  background-color: #0b5ed7;
 }
 
-/* Song Queue styles */
+#search-results {
+  margin-top: 20px;
+}
+
+/* Song Queue */
 h2 {
-  margin: 20px 0;
   text-align: center;
+  color: #444;
+  margin-top: 40px;
 }
 
 #queue {
-  padding: 10px;
-  background-color: #fff; /* White background for queue */
-  border-radius: 5px; /* Rounded corners */
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow */
-  margin: 0 15px; /* Margin for spacing */
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Responsive design */
-@media (max-width: 600px) {
-  #search-input {
-    width: calc(100% - 70px); /* Adjust width for smaller screens */
+/* Song Item */
+.song-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.song-item:last-child {
+  border-bottom: none;
+}
+
+.song-info {
+  font-size: 1em;
+  color: #333;
+}
+
+.vote-buttons button {
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.vote-buttons button:hover {
+  background-color: #ccc;
+}
+
+.vote-buttons button:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+.vote-buttons {
+  display: flex;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #search-section {
+    width: 90%;
+  }
+
+  #queue {
+    width: 90%;
+  }
+
+  .song-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .vote-buttons {
+    margin-top: 10px;
   }
 }
