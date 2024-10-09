@@ -14,7 +14,6 @@ const PORT = process.env.PORT || 3000;
 const cors = require('cors');
 app.use(cors());
 
-
 // Force HTTPS in production
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
@@ -129,12 +128,13 @@ app.get('/callback', (req, res) => {
   request.post(authOptions, (error, response, body) => {
     if (!error && response.statusCode === 200) {
       access_token = body.access_token;
-      refresh_token = body.refresh_token;
+      refresh_token = body.refresh_token; // Make sure this is set correctly
       expires_in = body.expires_in;
       token_timestamp = Date.now();
-
+  
       console.log('Access token acquired:', access_token);
-
+      console.log('Refresh token acquired:', refresh_token); // Log the refresh token
+  
       res.redirect('/');
     } else {
       console.error('Authentication failed:', error || body);
