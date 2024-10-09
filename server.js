@@ -1,5 +1,3 @@
-// backend/server.js
-
 const express = require('express');
 const request = require('request');
 const path = require('path');
@@ -21,19 +19,15 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-
-
 // Replace with your Spotify app credentials
-const client_id = '8e023a72267c4f74b9de04ccede8f811'; // Replace with your Spotify Client ID
-const client_secret = '67f48b407fd546d4aad1faa05314e055'; // Replace with your Spotify Client Secret
-const redirect_uri = 'http://localhost:8888';
-
+const client_id = process.env.SPOTIFY_CLIENT_ID; // Use environment variable
+const client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Use environment variable
+const redirect_uri = process.env.REDIRECT_URI || 'http://localhost:8888';
 
 const server = http.createServer(app);
 const io = socketIo(server);
 
 // Middleware
-app.use(express.static(path.join(__dirname, '../frontend')));
 app.use(bodyParser.json());
 app.use(cookieParser()); // Use cookie-parser
 
@@ -382,6 +376,6 @@ function getAvailableDevices(callback) {
 }
 
 // Start the server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
