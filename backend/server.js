@@ -278,19 +278,25 @@ function playNextTrack() {
     // Add the played track to recentlyPlayed
     if (currentTrack) {
       recentlyPlayed.push(currentTrack.id);
-      
+
       // Ensure we only keep the last 20 songs in recentlyPlayed
       if (recentlyPlayed.length > 20) {
         recentlyPlayed.shift(); // Remove the oldest song ID
       }
+
+      // Emit the currently playing track to all clients
+      io.emit('currentlyPlaying', {
+        name: currentTrack.name,
+        artist: currentTrack.artist,
+        album: currentTrack.album,
+        albumArt: currentTrack.albumArt
+      });
     }
+
     updateQueue();
     // Add the played track to the playlist
     addToPlaylist(currentTrack.uri);
     playTrack(currentTrack.uri);
-
-    
-    
 
   } else {
     currentTrack = null;
@@ -298,6 +304,7 @@ function playNextTrack() {
     console.log('Queue is empty. No track to play.');
   }
 }
+
 
 function addToPlaylist(trackUri) {
   if (!playlistId) {

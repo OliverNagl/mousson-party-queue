@@ -15,6 +15,7 @@ header {
   justify-content: space-between;
   align-items: center;
   color: white;
+  position: relative;
 }
 
 header h1 {
@@ -26,6 +27,23 @@ header i {
   font-size: 1.5em;
   cursor: pointer;
 }
+
+#current-track {
+  position: absolute;
+  bottom: -20px;
+  left: 20px;
+  background-color: #fff;
+  color: #333;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 1em;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#current-track-name {
+  font-weight: bold;
+}
+
 
 /* Search Section */
 #search-section {

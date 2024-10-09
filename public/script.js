@@ -16,6 +16,22 @@ socket.on('queueUpdated', (queue) => {
   displayQueue(queue);
 });
 
+const currentTrackName = document.getElementById('current-track-name');
+
+// Socket.io events
+socket.on('queueUpdated', (queue) => {
+  displayQueue(queue);
+});
+
+// Listen for the currently playing song from the server
+socket.on('currentlyPlaying', (track) => {
+  if (track && track.name && track.artist) {
+    currentTrackName.innerText = `${track.name} by ${track.artist}`;
+  } else {
+    currentTrackName.innerText = 'None';
+  }
+});
+
 // Functions
 
 let userVotes = {}; // { songId: true } - Track songs the user has voted on
