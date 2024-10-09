@@ -189,6 +189,42 @@ app.post('/api/queue', (req, res) => {
   }
 });
 
+app.get('/api/currently-playing', (req, res) => {
+  function fetchCurrentlyPlaying() {
+    const options = {
+      url: 'https://api.spotify.com/v1/me/player/currently-playing',
+      headers: { Authorization: 'Bearer ' + access_token },
+      json: true,
+    };
+
+    request.get(options, (error, response, body) => {
+      if (!error && response.statusCode === 200 && body && body.item) {
+        // Extracting relevant track data
+        const track = {
+          name: body.item.name,
+          artist: body.item.artists.map(artist => artist.name).join(', '),
+          album: body.item.album.name,
+          albumArt: body.item.album.images[0].url, // Get the album cover image
+          uri: body.item.uri,
+          progress: body.progress_ms,
+          duration: body.item.duration_ms
+        };
+        res.json(track);
+      } else {
+        console.error('Error fetching currently playing:', error || body);
+        res.status(500).send('Error fetching currently playing track');
+      }
+    });
+  }
+
+  if (isTokenExpired()) {
+    refreshAccessToken(fetchCurrentlyPlaying);
+  } else {
+    fetchCurrentlyPlaying();
+  }
+});
+
+
 app.post('/api/vote', (req, res) => {
   const userId = req.cookies.userId;
   const { songId, vote } = req.body; // vote can be +1 (upvote) or -1 (downvote)
@@ -249,10 +285,11 @@ function playNextTrack() {
       }
     }
     updateQueue();
-    playTrack(currentTrack.uri);
-
     // Add the played track to the playlist
     addToPlaylist(currentTrack.uri);
+    playTrack(currentTrack.uri);
+
+    
     
 
   } else {
