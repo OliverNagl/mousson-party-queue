@@ -42,25 +42,6 @@ socket.on('currentlyPlaying', (track) => {
   }
 });
 
-// Functions
-document.addEventListener('DOMContentLoaded', () => {
-  const sidebar = document.getElementById('sidebar');
-  const menuButton = document.getElementById('menuButton');
-  const closeSidebarButton = document.getElementById('closeSidebar');
-  const mainContent = document.getElementById('mainContent');
-
-  // Open the sidebar
-  menuButton.onclick = function() {
-      sidebar.style.left = '0'; // Slide the sidebar in
-      mainContent.style.marginLeft = '250px'; // Shift main content
-  }
-
-  // Close the sidebar
-  closeSidebarButton.onclick = function() {
-      sidebar.style.left = '-250px'; // Slide the sidebar out
-      mainContent.style.marginLeft = '0'; // Reset main content
-  }
-});
 let userVotes = {}; // { songId: true } - Track songs the user has voted on
 
 function searchTracks() {
