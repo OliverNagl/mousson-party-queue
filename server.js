@@ -329,6 +329,7 @@ function checkPlaybackState() {
 // Search Endpoint
 app.get('/api/search', (req, res) => {
   const query = req.query.q;
+  console.log(`Received search request for query: ${query}`);
 
   function searchSpotify() {
     const options = {
@@ -357,6 +358,35 @@ app.get('/api/search', (req, res) => {
     searchSpotify();
   }
 });
+
+function refreshAccessToken(callback) {
+  console.log('Refreshing access token...');
+  const authOptions = {
+    url: 'https://accounts.spotify.com/api/token',
+    headers: {
+      Authorization:
+        'Basic ' +
+        Buffer.from(client_id + ':' + client_secret).toString('base64'),
+    },
+    form: {
+      grant_type: 'refresh_token',
+      refresh_token: refresh_token,
+    },
+    json: true,
+  };
+
+  request.post(authOptions, (error, response, body) => {
+    if (!error && response.statusCode === 200) {
+      access_token = body.access_token;
+      expires_in = body.expires_in;
+      token_timestamp = Date.now();
+      console.log('Access token refreshed successfully');
+      callback();
+    } else {
+      console.error('Error refreshing access token:', error || body);
+    }
+  });
+}
 
 function getAvailableDevices(callback) {
   const options = {
