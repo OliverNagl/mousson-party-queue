@@ -44,7 +44,45 @@ header i {
   font-weight: bold;
 }
 
+/* Add this to your CSS file */
+.sidebar {
+  height: 100%;
+  width: 250px; /* Width of the sidebar */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  top: 0; /* Stay at the top */
+  left: -250px; /* Hide sidebar off-screen */
+  background-color: #111; /* Black background */
+  overflow-x: hidden; /* Disable horizontal scroll */
+  transition: 0.5s; /* Transition effect for opening */
+  padding-top: 60px; /* Place content 60px from the top */
+}
 
+.sidebar a {
+  padding: 10px 15px; /* Padding for links */
+  text-decoration: none; /* No underline */
+  font-size: 25px; /* Larger font size */
+  color: white; /* White text color */
+  display: block; /* Make links block elements */
+  transition: 0.3s; /* Transition effect for hover */
+}
+
+.sidebar a:hover {
+  color: #f1f1f1; /* Light color on hover */
+}
+
+.closebtn {
+  position: absolute; /* Position for close button */
+  top: 20px; /* Distance from the top */
+  right: 25px; /* Distance from the right */
+  font-size: 30px; /* Size of close button */
+  margin-left: 50px; /* Space on the left */
+}
+
+/* Style for the main content when sidebar is open */
+#mainContent {
+  transition: margin-left 0.5s; /* Transition for main content */
+}
 /* Search Section */
 #search-section {
   padding: 20px;
