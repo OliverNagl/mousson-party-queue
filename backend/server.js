@@ -10,8 +10,8 @@ const cookieParser = require('cookie-parser'); // Added for user tracking
 const { v4: uuidv4 } = require('uuid'); // Added for generating unique user IDs
 
 // Replace with your Spotify app credentials
-const client_id = '5b0c921d474a4bc89a347705a65c7502'; // Replace with your Spotify Client ID
-const client_secret = 'c4e9b10546f04f2b8c3a52e9ae5bd64f'; // Replace with your Spotify Client Secret
+const client_id = ''; // Replace with your Spotify Client ID
+const client_secret = ''; // Replace with your Spotify Client Secret
 const redirect_uri = 'http://localhost:8888/callback';
 
 const app = express();
