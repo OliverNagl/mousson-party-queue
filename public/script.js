@@ -22,19 +22,23 @@ let userVotes = {}; // { songId: true } - Track songs the user has voted on
 
 function searchTracks() {
   const query = searchInput.value;
+  console.log(`Searching for tracks with query: ${query}`);
+  
   fetch(`/api/search?q=${encodeURIComponent(query)}`)
     .then(response => {
+      console.log(`Received response with status: ${response.status}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       return response.json();
     })
     .then(tracks => {
+      console.log('Received tracks:', tracks);
       displaySearchResults(tracks);
     })
     .catch(error => {
       console.error('Error fetching search results:', error);
-      alert('Error fetching search results. Please try again.');
+      alert('Error fetching search results, ;( Please try again.');
     });
 }
 

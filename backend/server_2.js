@@ -1,5 +1,3 @@
-// backend/server.js
-
 const express = require('express');
 const request = require('request');
 const path = require('path');
@@ -8,18 +6,50 @@ const socketIo = require('socket.io');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser'); // Added for user tracking
 const { v4: uuidv4 } = require('uuid'); // Added for generating unique user IDs
+require('dotenv').config();
+// Create an Express app
+const app = express();
+const PORT = process.env.PORT || 8888;
+
+const cors = require('cors');
+app.use(cors());
+
+// Force HTTPS in production
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    // If the request is not using HTTPS
+    if (req.header('x-forwarded-proto') !== 'https') {
+      // Redirect to HTTPS
+      res.redirect(`https://${req.header('host')}${req.url}`);
+    } else {
+      // Continue to the next middleware or route
+      next();
+    }
+  });
+}
+
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, '../public')));
+
+// Handle all routes by sending the index.html file
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public', 'index.html'));
+});
 
 // Replace with your Spotify app credentials
-const client_id = '8e023a72267c4f74b9de04ccede8f811'; // Replace with your Spotify Client ID
-const client_secret = '67f48b407fd546d4aad1faa05314e055'; // Replace with your Spotify Client Secret
-const redirect_uri = 'https://party-queue-57ab7486e08a.herokuapp.com/callback';
+const client_id = process.env.SPOTIFY_CLIENT_ID; // Use environment variable
+const client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Use environment variable
+const redirect_uri = process.env.REDIRECT_URI;
 
-const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: '*',  // Allow requests from any origin
+    methods: ['GET', 'POST']  // Allow these methods
+  }
+});
 
 // Middleware
-app.use(express.static(path.join(__dirname, '../public')));
 app.use(bodyParser.json());
 app.use(cookieParser()); // Use cookie-parser
 
@@ -98,12 +128,13 @@ app.get('/callback', (req, res) => {
   request.post(authOptions, (error, response, body) => {
     if (!error && response.statusCode === 200) {
       access_token = body.access_token;
-      refresh_token = body.refresh_token;
+      refresh_token = body.refresh_token; // Make sure this is set correctly
       expires_in = body.expires_in;
       token_timestamp = Date.now();
-
+  
       console.log('Access token acquired:', access_token);
-      console.log('Refresh token acquired:', refresh_token); 
+      console.log('Refresh token acquired:', refresh_token); // Log the refresh token
+  
       res.redirect('/');
     } else {
       console.error('Authentication failed:', error || body);
@@ -144,9 +175,12 @@ function refreshAccessToken(callback) {
   });
 }
 
-// Check if token is expired
 function isTokenExpired() {
-  return Date.now() > token_timestamp + expires_in * 1000;
+  const currentTime = Date.now();
+  const tokenExpiryTime = token_timestamp + expires_in * 1000;
+  const isExpired = currentTime > tokenExpiryTime;
+  console.log(`Token expired: ${isExpired}`);
+  return isExpired;
 }
 
 // Queue Management
@@ -317,22 +351,26 @@ function checkPlaybackState() {
     }
   });
 }
-
+// Search Endpoint
 // Search Endpoint
 app.get('/api/search', (req, res) => {
   const query = req.query.q;
+  console.log(`Received search request for query: ${query}`);
 
   function searchSpotify() {
     const options = {
-      url: `https://api.spotify.com/v1/search?q=${encodeURIComponent(
-        query
-      )}&type=track&limit=10`,
+      url: `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=10`,
       headers: { Authorization: 'Bearer ' + access_token },
       json: true,
     };
 
+    // Insert this code block here
     request.get(options, (error, response, body) => {
       if (!error && response.statusCode === 200) {
+        console.log('Search results:', body.tracks.items);
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
         res.json(body.tracks.items);
       } else {
         console.error('Error in searchSpotify:', error || body);
@@ -341,7 +379,9 @@ app.get('/api/search', (req, res) => {
     });
   }
 
+  // Check if token is expired, refresh if necessary
   if (isTokenExpired()) {
+    console.log('Access token expired. Refreshing token...');
     refreshAccessToken(() => {
       searchSpotify();
     });
@@ -350,6 +390,43 @@ app.get('/api/search', (req, res) => {
   }
 });
 
+
+function isTokenExpired() {
+  const currentTime = Date.now();
+  const tokenExpiryTime = token_timestamp + expires_in * 1000;
+  const isExpired = currentTime > tokenExpiryTime;
+  console.log(`Token expired: ${isExpired}`);
+  return isExpired;
+}
+
+function refreshAccessToken(callback) {
+  console.log('Refreshing access token...');
+  const authOptions = {
+    url: 'https://accounts.spotify.com/api/token',
+    headers: {
+      Authorization:
+        'Basic ' +
+        Buffer.from(client_id + ':' + client_secret).toString('base64'),
+    },
+    form: {
+      grant_type: 'refresh_token',
+      refresh_token: refresh_token,
+    },
+    json: true,
+  };
+
+  request.post(authOptions, (error, response, body) => {
+    if (!error && response.statusCode === 200) {
+      access_token = body.access_token;
+      expires_in = body.expires_in;
+      token_timestamp = Date.now();
+      console.log('Access token refreshed successfully');
+      callback();
+    } else {
+      console.error('Error refreshing access token:', error || body);
+    }
+  });
+}
 function getAvailableDevices(callback) {
   const options = {
     url: 'https://api.spotify.com/v1/me/player/devices',
@@ -367,10 +444,11 @@ function getAvailableDevices(callback) {
   });
 }
 
-// Start the server
-const PORT = process.env.PORT || 8888;
+
+
 const HOST = '0.0.0.0'; // Listen on all network interfaces
 
 server.listen(PORT, HOST, () => {
   console.log(`Server running on http://${HOST}:${PORT}`);
 });
+
