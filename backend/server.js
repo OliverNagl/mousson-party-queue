@@ -223,9 +223,9 @@ function createPlaylist() {
     url: `https://api.spotify.com/v1/me/playlists`,
     headers: { Authorization: 'Bearer ' + access_token },
     json: {
-      name: "Party Queue Playlist",
+      name: "MoussonPartyPlaylist",
       description: "Songs queued during the session",
-      public: false, // You can set it to true if you want the playlist public
+      public: True, // You can set it to true if you want the playlist public
     },
   };
 
@@ -259,6 +259,13 @@ function playNextTrack() {
   if (queue.length > 0) {
     currentTrack = queue.shift();
 
+    if (!playlistId) {
+      createPlaylist(); // Create the playlist if it hasn't been created yet
+    }
+
+    // Add the played song to the playlist
+    addToPlaylist(currentTrack.uri);
+
     // Add the played track to recentlyPlayed
     if (currentTrack) {
       recentlyPlayed.push(currentTrack.id);
@@ -268,13 +275,6 @@ function playNextTrack() {
         recentlyPlayed.shift(); // Remove the oldest song ID
       }
     }
-
-    if (!playlistId) {
-      createPlaylist(); // Create the playlist if it hasn't been created yet
-    }
-
-    // Add the played song to the playlist
-    addToPlaylist(currentTrack.uri);
 
     updateQueue();
     playTrack(currentTrack.uri);
