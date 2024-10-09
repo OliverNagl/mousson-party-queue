@@ -9,6 +9,15 @@ const searchResultsDiv = document.getElementById('search-results');
 const queueDiv = document.getElementById('queue');
 const currentTrackName = document.getElementById('current-track-name');
 
+// Event Listeners
+searchBtn.addEventListener('click', searchTracks);
+
+// Show search results when the input is focused
+searchInput.addEventListener('focus', () => {
+  searchResultsDiv.style.display = 'block';
+  queueDiv.style.display = 'none'; // Optionally hide the queue container while searching
+});
+
 // Hide search results and show queue when the search bar loses focus
 searchInput.addEventListener('blur', () => {
   setTimeout(() => {
@@ -16,9 +25,6 @@ searchInput.addEventListener('blur', () => {
     queueDiv.style.display = 'block'; // Show the queue
   }, 150); // Timeout to allow click event on search results to be registered
 });
-
-// Event Listeners
-searchBtn.addEventListener('click', searchTracks);
 
 // Listen for clicks outside the search input and results
 document.addEventListener('click', (event) => {
@@ -45,32 +51,32 @@ socket.on('currentlyPlaying', (track) => {
 let userVotes = {}; // { songId: true } - Track songs the user has voted on
 
 function searchTracks() {
-  const query = searchInput.value;
+  const query = searchInput.value.trim();
   console.log(`Searching for tracks with query: ${query}`);
   
-  fetch(`/api/search?q=${encodeURIComponent(query)}`)
-    .then(response => {
-      console.log(`Received response with status: ${response.status}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(tracks => {
-      console.log('Received tracks:', tracks);
-      displaySearchResults(tracks);
-    })
-    .catch(error => {
-      console.error('Error fetching search results:', error);
-      alert('Error fetching search results, ;( Please try again.');
-    });
+  if (query) {
+    fetch(`/api/search?q=${encodeURIComponent(query)}`)
+      .then(response => {
+        console.log(`Received response with status: ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(tracks => {
+        console.log('Received tracks:', tracks);
+        displaySearchResults(tracks);
+        searchResultsDiv.style.display = 'block'; // Show results immediately after search
+        queueDiv.style.display = 'none'; // Optionally hide the queue
+      })
+      .catch(error => {
+        console.error('Error fetching search results:', error);
+        alert('Error fetching search results, ;( Please try again.');
+      });
+  } else {
+    searchResultsDiv.innerHTML = ''; // Clear results if input is empty
+  }
 }
-
-searchInput.addEventListener('focus', () => {
-  // Show the search results container when the search input is focused
-  searchResultsDiv.style.display = 'block';
-  queueDiv.style.display = 'none'; // Optionally hide the queue container while searching
-});
 
 function displaySearchResults(tracks) {
   searchResultsDiv.innerHTML = '';
