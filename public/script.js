@@ -7,16 +7,26 @@ const searchInput = document.getElementById('search-input');
 const searchBtn = document.getElementById('search-btn');
 const searchResultsDiv = document.getElementById('search-results');
 const queueDiv = document.getElementById('queue');
+const currentTrackName = document.getElementById('current-track-name');
+
+// Hide search results and show queue when the search bar loses focus
+searchInput.addEventListener('blur', () => {
+  setTimeout(() => {
+    searchResultsDiv.style.display = 'none'; // Hide search results
+    queueDiv.style.display = 'block'; // Show the queue
+  }, 150); // Timeout to allow click event on search results to be registered
+});
 
 // Event Listeners
 searchBtn.addEventListener('click', searchTracks);
 
-// Socket.io events
-socket.on('queueUpdated', (queue) => {
-  displayQueue(queue);
+// Listen for clicks outside the search input and results
+document.addEventListener('click', (event) => {
+  if (!searchInput.contains(event.target) && !searchResultsDiv.contains(event.target)) {
+    searchResultsDiv.style.display = 'none'; // Hide search results
+    queueDiv.style.display = 'block'; // Show the queue
+  }
 });
-
-const currentTrackName = document.getElementById('current-track-name');
 
 // Socket.io events
 socket.on('queueUpdated', (queue) => {
@@ -26,9 +36,9 @@ socket.on('queueUpdated', (queue) => {
 // Listen for the currently playing song from the server
 socket.on('currentlyPlaying', (track) => {
   if (track && track.name && track.artist) {
-    currentTrackName.innerText = `${track.name} by ${track.artist}`;
+    currentTrackName.innerText = `Currently playing: ${track.name} by ${track.artist}`;
   } else {
-    currentTrackName.innerText = 'None';
+    currentTrackName.innerText = 'Currently playing: None';
   }
 });
 
@@ -57,6 +67,12 @@ function searchTracks() {
       alert('Error fetching search results, ;( Please try again.');
     });
 }
+
+searchInput.addEventListener('focus', () => {
+  // Show the search results container when the search input is focused
+  searchResultsDiv.style.display = 'block';
+  queueDiv.style.display = 'none'; // Optionally hide the queue container while searching
+});
 
 function displaySearchResults(tracks) {
   searchResultsDiv.innerHTML = '';
