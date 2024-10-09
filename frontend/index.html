@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Party Playlist</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+  <header>
+    <h1>Party Playlist</h1>
+    <i class="fas fa-bars"></i>
+  </header>
+
+  <div id="search-section">
+    <input type="text" id="search-input" placeholder="Search for songs">
+    <button id="search-btn">Search</button>
+    <div id="search-results"></div>
+  </div>
+
+  <h2>Song Queue</h2>
+  <div id="queue"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+/* style.css */
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+}
+
+header h1 {
+  margin: 0;
+}
+
+header .fa-bars {
+  font-size: 24px;
+}
+
+#search-section {
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+  border-radius: 8px;
+}
+
+#search-input {
+  width: calc(100% - 100px);
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+#search-btn {
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#search-results .song-item, #queue .song-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: white;
+  margin: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.song-info {
+  flex-grow: 1;
+}
+
+.vote-buttons button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.vote-buttons .upvote {
+  background-color: #28a745;
+  color: white;
+}
+
+.vote-buttons .downvote {
+  background-color: #dc3545;
+  color: white;
+}
+
+@media (max-width: 600px) {
+  #search-input {
+    width: calc(100% - 80px);
+  }
+
+  #search-btn {
+    padding: 10px;
+  }
+}
