@@ -32,6 +32,8 @@ app.use((req, res, next) => {
 });
 
 // In-memory storage
+
+let recentlyPlayed = [];
 let access_token = '';
 let refresh_token = '';
 let expires_in = 0;
@@ -40,6 +42,9 @@ let queue = [];
 let currentTrack = null;
 let isPlaying = false;
 let votes = {}; // { userId: { songId: vote } } - For tracking user votes
+let playlistId = null; // Store the playlist ID for reuse
+
+
 
 // Scopes required
 const scopes = [
@@ -157,6 +162,21 @@ app.get('/api/queue', (req, res) => {
 app.post('/api/queue', (req, res) => {
   const song = req.body;
   song.votes = 0;
+
+  // Check if the song is already in the queue
+  const isSongInQueue = queue.some((queuedSong) => queuedSong.id === song.id);
+
+  if (isSongInQueue) {
+    res.status(400).send('This song is already in the queue.');
+    return;
+  }
+
+  // Check if the song has been played in the last 20 tracks
+  if (recentlyPlayed.includes(song.id)) {
+    res.status(400).send('This song was recently played and cannot be added to the queue.');
+    return;
+  }
+
   queue.push(song);
   updateQueue();
   res.sendStatus(200);
@@ -169,27 +189,55 @@ app.post('/api/queue', (req, res) => {
 
 app.post('/api/vote', (req, res) => {
   const userId = req.cookies.userId;
-  const { songId, vote } = req.body;
+  const { songId, vote } = req.body; // vote can be +1 (upvote) or -1 (downvote)
 
   if (!votes[userId]) {
     votes[userId] = {};
   }
 
-  // Check if user has already voted on this song
-  if (votes[userId][songId]) {
-    res.status(400).send('You have already voted on this song.');
-  } else {
-    const song = queue.find((s) => s.id === songId);
-    if (song) {
-      song.votes += vote;
-      votes[userId][songId] = vote;
-      updateQueue();
-      res.sendStatus(200);
-    } else {
-      res.status(404).send('Song not found.');
-    }
+  const song = queue.find((s) => s.id === songId);
+  if (!song) {
+    res.status(404).send('Song not found.');
+    return;
   }
+
+  // Check if the user has already voted on this song
+  const previousVote = votes[userId][songId] || 0; // Default to 0 if no previous vote
+
+  // If the user has voted, adjust the song's votes by removing the old vote and adding the new one
+  if (previousVote !== 0) {
+    song.votes -= previousVote; // Remove the effect of the previous vote
+  }
+
+  // Apply the new vote
+  song.votes += vote;
+  votes[userId][songId] = vote; // Store the user's new vote
+
+  updateQueue();
+  res.sendStatus(200);
 });
+
+// Create a playlist in a specific Spotify account (e.g., your app's account)
+function createPlaylist() {
+  const options = {
+    url: `https://api.spotify.com/v1/me/playlists`,
+    headers: { Authorization: 'Bearer ' + access_token },
+    json: {
+      name: "Party Queue Playlist",
+      description: "Songs queued during the session",
+      public: false, // You can set it to true if you want the playlist public
+    },
+  };
+
+  request.post(options, (error, response, body) => {
+    if (!error && response.statusCode === 201) {
+      console.log("Playlist created successfully:", body);
+      playlistId = body.id; // Save the playlist ID
+    } else {
+      console.error("Error creating playlist:", error || body);
+    }
+  });
+}
 
 // Socket.io for real-time updates
 io.on('connection', (socket) => {
@@ -207,10 +255,27 @@ function updateQueue() {
   io.emit('queueUpdated', queue);
 }
 
-// Playback Control
 function playNextTrack() {
   if (queue.length > 0) {
     currentTrack = queue.shift();
+
+    // Add the played track to recentlyPlayed
+    if (currentTrack) {
+      recentlyPlayed.push(currentTrack.id);
+      
+      // Ensure we only keep the last 20 songs in recentlyPlayed
+      if (recentlyPlayed.length > 20) {
+        recentlyPlayed.shift(); // Remove the oldest song ID
+      }
+    }
+
+    if (!playlistId) {
+      createPlaylist(); // Create the playlist if it hasn't been created yet
+    }
+
+    // Add the played song to the playlist
+    addToPlaylist(currentTrack.uri);
+
     updateQueue();
     playTrack(currentTrack.uri);
   } else {
@@ -219,6 +284,31 @@ function playNextTrack() {
     console.log('Queue is empty. No track to play.');
   }
 }
+
+function addToPlaylist(trackUri) {
+  if (!playlistId) {
+    console.error("Playlist not available yet. Can't add the track.");
+    return;
+  }
+
+  const options = {
+    url: `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+    headers: { Authorization: "Bearer " + access_token },
+    json: {
+      uris: [trackUri], // Add the current song to the playlist
+    },
+  };
+
+  request.post(options, (error, response, body) => {
+    if (!error && response.statusCode === 201) {
+      console.log("Track added to playlist:", trackUri);
+    } else {
+      console.error("Error adding track to playlist:", error || body);
+    }
+  });
+}
+
+
 
 function playTrack(trackUri) {
   console.log('Preparing to play track:', trackUri);
