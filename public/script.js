@@ -113,11 +113,6 @@ function displayQueue(queue) {
 }
 
 function voteSong(songId, vote, upvoteBtn, downvoteBtn) {
-  if (userVotes[songId]) {
-    alert('You have already voted on this song.');
-    return;
-  }
-
   fetch('/api/vote', {
     method: 'POST',
     headers: {
