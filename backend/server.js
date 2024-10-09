@@ -270,13 +270,6 @@ function playNextTrack() {
         recentlyPlayed.shift(); // Remove the oldest song ID
       }
     }
-    if (!playlistId) {
-      createPlaylist(); // Create the playlist if it hasn't been created yet
-    }
-
-    // Add the played song to the playlist
-    addToPlaylist(currentTrack.uri);
-    
     updateQueue();
     playTrack(currentTrack.uri);
   } else {
