@@ -255,13 +255,31 @@ app.post('/api/vote', (req, res) => {
   res.sendStatus(200);
 });
 
-// Socket.io for real-time updates
 io.on('connection', (socket) => {
   console.log('A user connected');
+  
+  // Emit the current track information when a user connects
+  if (currentTrack) {
+      socket.emit('currentlyPlaying', {
+          name: currentTrack.name,
+          artist: currentTrack.artist,
+          album: currentTrack.album,
+          albumArt: currentTrack.albumArt
+      });
+  } else {
+      socket.emit('currentlyPlaying', {
+          name: 'None',
+          artist: '',
+          album: '',
+          albumArt: ''
+      });
+  }
+
+  // Emit the current queue when a user connects
   socket.emit('queueUpdated', queue);
 
   socket.on('disconnect', () => {
-    console.log('A user disconnected');
+      console.log('A user disconnected');
   });
 });
 

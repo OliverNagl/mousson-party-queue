@@ -36,9 +36,9 @@ socket.on('queueUpdated', (queue) => {
 // Listen for the currently playing song from the server
 socket.on('currentlyPlaying', (track) => {
   if (track && track.name && track.artist) {
-    currentTrackName.innerText = `Currently playing: ${track.name} by ${track.artist}`;
+    currentTrackName.innerText = `${track.name} by ${track.artist}`;
   } else {
-    currentTrackName.innerText = 'Currently playing: None';
+    currentTrackName.innerText = 'None';
   }
 });
 
