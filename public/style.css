@@ -81,6 +81,29 @@ header i {
   background-color: #0b5ed7;
 }
 
+/* Playlist Container */
+.playlist-container {
+  background-color: #2a2a2a; /* Dark background to match Spotify theme */
+  color: #ffffff; /* White text for contrast */
+  padding: 20px; /* Add some padding */
+  border-radius: 10px; /* Rounded corners */
+  text-align: center; /* Center the text */
+  margin: 20px 0; /* Margin for spacing */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+/* Playlist Link */
+.playlist-link {
+  color: #1db954; /* Spotify green */
+  text-decoration: none; /* Remove underline */
+  font-weight: bold; /* Make the link bold */
+  transition: color 0.3s; /* Smooth color transition */
+}
+
+.playlist-link:hover {
+  color: #1aa34a; /* Darker green on hover */
+}
+
 #search-results {
   margin-top: 20px;
 }
