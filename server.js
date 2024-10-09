@@ -332,15 +332,14 @@ app.get('/api/search', (req, res) => {
 
   function searchSpotify() {
     const options = {
-      url: `https://api.spotify.com/v1/search?q=${encodeURIComponent(
-        query
-      )}&type=track&limit=10`,
+      url: `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=10`,
       headers: { Authorization: 'Bearer ' + access_token },
       json: true,
     };
 
     request.get(options, (error, response, body) => {
       if (!error && response.statusCode === 200) {
+        console.log('Search results:', body.tracks.items);
         res.json(body.tracks.items);
       } else {
         console.error('Error in searchSpotify:', error || body);
@@ -350,6 +349,7 @@ app.get('/api/search', (req, res) => {
   }
 
   if (isTokenExpired()) {
+    console.log('Access token expired. Refreshing token...');
     refreshAccessToken(() => {
       searchSpotify();
     });
