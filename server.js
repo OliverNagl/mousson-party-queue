@@ -274,7 +274,7 @@ function getAvailableDevicesAndPlay(trackUri) {
 
     // Replace 'Laszlos MacBook Air' with your actual device name
     const laptopDevice = devices.find(
-      (device) => device.name === 'Laszlos MacBook Air' // Replace this
+      (device) => device.name === 'LAPTOP-CE0GELR1' // Replace this
     );
 
     if (laptopDevice) {
@@ -352,6 +352,7 @@ function checkPlaybackState() {
   });
 }
 // Search Endpoint
+// Search Endpoint
 app.get('/api/search', (req, res) => {
   const query = req.query.q;
   console.log(`Received search request for query: ${query}`);
@@ -363,6 +364,7 @@ app.get('/api/search', (req, res) => {
       json: true,
     };
 
+    // Insert this code block here
     request.get(options, (error, response, body) => {
       if (!error && response.statusCode === 200) {
         console.log('Search results:', body.tracks.items);
@@ -377,6 +379,7 @@ app.get('/api/search', (req, res) => {
     });
   }
 
+  // Check if token is expired, refresh if necessary
   if (isTokenExpired()) {
     console.log('Access token expired. Refreshing token...');
     refreshAccessToken(() => {
@@ -386,6 +389,7 @@ app.get('/api/search', (req, res) => {
     searchSpotify();
   }
 });
+
 
 function isTokenExpired() {
   const currentTime = Date.now();
