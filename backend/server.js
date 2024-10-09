@@ -260,11 +260,6 @@ io.on('connection', (socket) => {
   console.log('A user connected');
   socket.emit('queueUpdated', queue);
 
-  // Emit the current track to the newly connected client
-  if (currentlyPlaying) {
-    socket.emit('currentlyPlaying', currentlyPlaying);
-}
-
   socket.on('disconnect', () => {
     console.log('A user disconnected');
   });
