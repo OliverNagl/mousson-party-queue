@@ -6,10 +6,10 @@ const socketIo = require('socket.io');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser'); // Added for user tracking
 const { v4: uuidv4 } = require('uuid'); // Added for generating unique user IDs
-
+require('dotenv').config();
 // Create an Express app
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8888;
 
 const cors = require('cors');
 app.use(cors());
@@ -29,7 +29,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Handle all routes by sending the index.html file
 app.get('*', (req, res) => {
