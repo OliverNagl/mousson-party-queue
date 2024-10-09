@@ -11,6 +11,24 @@ const { v4: uuidv4 } = require('uuid'); // Added for generating unique user IDs
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const cors = require('cors');
+app.use(cors());
+
+
+// Force HTTPS in production
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    // If the request is not using HTTPS
+    if (req.header('x-forwarded-proto') !== 'https') {
+      // Redirect to HTTPS
+      res.redirect(`https://${req.header('host')}${req.url}`);
+    } else {
+      // Continue to the next middleware or route
+      next();
+    }
+  });
+}
+
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -25,7 +43,12 @@ const client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Use environment vari
 const redirect_uri = process.env.REDIRECT_URI || 'https://party-queue-57ab7486e08a.herokuapp.com/callback';
 
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: '*',  // Allow requests from any origin
+    methods: ['GET', 'POST']  // Allow these methods
+  }
+});
 
 // Middleware
 app.use(bodyParser.json());
