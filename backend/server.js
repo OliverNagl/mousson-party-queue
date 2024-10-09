@@ -42,7 +42,7 @@ let queue = [];
 let currentTrack = null;
 let isPlaying = false;
 let votes = {}; // { userId: { songId: vote } } - For tracking user votes
-let playlistId = null; // Store the playlist ID for reuse
+let playlistId = "051HRJaonkYB1gAIhn3GUJ"; // Store the playlist ID for reuse
 
 
 
@@ -259,8 +259,6 @@ function playNextTrack() {
   if (queue.length > 0) {
     currentTrack = queue.shift();
 
-    
-
     // Add the played track to recentlyPlayed
     if (currentTrack) {
       recentlyPlayed.push(currentTrack.id);
@@ -272,6 +270,12 @@ function playNextTrack() {
     }
     updateQueue();
     playTrack(currentTrack.uri);
+
+    // Add the played track to the playlist
+    if (playlistId) {
+      addToPlaylist(currentTrack.uri);
+    }
+
   } else {
     currentTrack = null;
     isPlaying = false;
