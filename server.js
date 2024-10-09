@@ -152,9 +152,12 @@ function refreshAccessToken(callback) {
   });
 }
 
-// Check if token is expired
 function isTokenExpired() {
-  return Date.now() > token_timestamp + expires_in * 1000;
+  const currentTime = Date.now();
+  const tokenExpiryTime = token_timestamp + expires_in * 1000;
+  const isExpired = currentTime > tokenExpiryTime;
+  console.log(`Token expired: ${isExpired}`);
+  return isExpired;
 }
 
 // Queue Management
